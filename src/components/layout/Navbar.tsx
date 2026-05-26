@@ -1,4 +1,5 @@
 import { PROTOCOLS } from "@/data/protocols";
+import { navigate } from "@/router";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, Cpu } from "lucide-react";
 import { useEffect, useRef, useState, type ReactNode, type RefObject } from "react";
@@ -21,6 +22,10 @@ const SEMICONDUCTORS = [
   { id: "imxrt", name: "i.MX RT", sub: "Cortex-M7 · NXP Semiconductors", tag: "600 MHz" },
 ];
 
+const COMPONENTS = [
+  { id: "mosfet", name: "IRLZ44N", sub: "N-Channel Power MOSFET · Logic-Level", tag: "Switch", path: "/mosfet" },
+];
+
 function useOutsideClick(ref: RefObject<HTMLElement | null>, cb: () => void) {
   useEffect(() => {
     function handle(e: MouseEvent) {
@@ -34,10 +39,12 @@ function useOutsideClick(ref: RefObject<HTMLElement | null>, cb: () => void) {
 function DropMenu({
   label,
   hoverTextClass,
+  align = "left",
   children,
 }: {
   label: string;
   hoverTextClass: string;
+  align?: "left" | "right";
   children: ReactNode;
 }) {
   const [open, setOpen] = useState(false);
@@ -65,7 +72,7 @@ function DropMenu({
             exit={{ opacity: 0, y: -6, scaleY: 0.95 }}
             transition={{ duration: 0.15 }}
             style={{ transformOrigin: "top" }}
-            className="absolute top-full left-0 z-50 min-w-72 border border-white/15 bg-[#080808]/97 backdrop-blur-xl shadow-2xl"
+            className={`absolute top-full z-50 w-80 max-w-[calc(100vw-2rem)] border border-white/15 bg-[#080808]/97 backdrop-blur-xl shadow-2xl ${align === "right" ? "right-0" : "left-0"}`}
           >
             {children}
           </motion.div>
@@ -77,7 +84,21 @@ function DropMenu({
 
 export function Navbar() {
   const scrollTo = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" });
+    } else {
+      sessionStorage.setItem("scrollTarget", id);
+      navigate("/");
+    }
+  };
+
+  const goHome = () => {
+    if (window.location.pathname === "/") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      navigate("/");
+    }
   };
 
   return (
@@ -92,11 +113,11 @@ export function Navbar() {
             role="button"
             tabIndex={0}
             className="flex items-center gap-2 text-neon-cyan cursor-pointer"
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            onClick={goHome}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
                 e.preventDefault();
-                window.scrollTo({ top: 0, behavior: "smooth" });
+                goHome();
               }
             }}
           >
@@ -113,15 +134,15 @@ export function Navbar() {
                   key={p.id}
                   type="button"
                   onClick={() => scrollTo(p.id)}
-                  className="w-full flex items-center gap-4 px-5 py-4 border-b border-white/8 last:border-b-0 hover:bg-white/5 transition-colors group text-left"
+                  className="w-full flex items-center gap-3 px-4 h-10 border-b border-white/8 last:border-b-0 hover:bg-white/5 transition-colors group text-left"
                 >
                   <span
-                    className="text-xl font-bold font-mono tracking-tight w-20 shrink-0"
+                    className="text-sm font-bold font-mono tracking-tight w-16 shrink-0"
                     style={{ color: PROTOCOL_COLORS[p.color] }}
                   >
                     {p.name}
                   </span>
-                  <span className="text-xs font-mono text-foreground/45 group-hover:text-foreground/70 transition-colors leading-snug">
+                  <span className="text-xs font-mono text-foreground/45 group-hover:text-foreground/70 transition-colors truncate">
                     {p.tagline}
                   </span>
                 </button>
@@ -129,31 +150,50 @@ export function Navbar() {
               <button
                 type="button"
                 onClick={() => scrollTo("comparison")}
-                className="w-full flex items-center gap-4 px-5 py-4 hover:bg-white/5 transition-colors text-left border-t border-neon-cyan/20"
+                className="w-full flex items-center gap-3 px-4 h-10 hover:bg-white/5 transition-colors text-left border-t border-neon-cyan/20"
               >
-                <span className="text-sm font-bold font-mono text-neon-cyan/70 tracking-widest">
+                <span className="text-xs font-bold font-mono text-neon-cyan/70 tracking-widest">
                   [COMPARE ALL →]
                 </span>
               </button>
             </DropMenu>
 
-            <DropMenu label="SEMICONDUCTORS" hoverTextClass="hover:text-neon-magenta">
+            <DropMenu label="SEMICONDUCTORS" hoverTextClass="hover:text-neon-magenta" align="right">
               {SEMICONDUCTORS.map((s) => (
                 <button
                   key={s.id}
                   type="button"
-                  className="w-full flex items-center gap-4 px-5 py-4 border-b border-white/8 last:border-b-0 hover:bg-white/5 transition-colors group text-left"
+                  className="w-full flex items-center gap-3 px-4 h-10 border-b border-white/8 last:border-b-0 hover:bg-white/5 transition-colors group text-left"
                 >
-                  <div className="flex-1 min-w-0">
-                    <div className="text-xl font-bold font-mono text-neon-magenta/80 tracking-tight group-hover:text-neon-magenta transition-colors">
-                      {s.name}
-                    </div>
-                    <div className="text-xs font-mono text-foreground/40 group-hover:text-foreground/65 transition-colors mt-0.5">
-                      {s.sub}
-                    </div>
-                  </div>
-                  <span className="text-xs font-mono px-2 py-1 border border-neon-magenta/25 text-neon-magenta/50 bg-neon-magenta/5 shrink-0">
+                  <span className="text-sm font-bold font-mono text-neon-magenta/80 tracking-tight group-hover:text-neon-magenta transition-colors w-16 shrink-0">
+                    {s.name}
+                  </span>
+                  <span className="text-xs font-mono text-foreground/40 group-hover:text-foreground/65 transition-colors truncate flex-1">
+                    {s.sub}
+                  </span>
+                  <span className="text-xs font-mono px-1.5 py-0.5 border border-neon-magenta/25 text-neon-magenta/50 bg-neon-magenta/5 shrink-0">
                     {s.tag}
+                  </span>
+                </button>
+              ))}
+            </DropMenu>
+
+            <DropMenu label="COMPONENTS" hoverTextClass="hover:text-neon-green" align="right">
+              {COMPONENTS.map((c) => (
+                <button
+                  key={c.id}
+                  type="button"
+                  onClick={() => navigate(c.path)}
+                  className="w-full flex items-center gap-3 px-4 h-10 border-b border-white/8 last:border-b-0 hover:bg-white/5 transition-colors group text-left"
+                >
+                  <span className="text-sm font-bold font-mono text-neon-green/80 tracking-tight group-hover:text-neon-green transition-colors w-20 shrink-0">
+                    {c.name}
+                  </span>
+                  <span className="text-xs font-mono text-foreground/40 group-hover:text-foreground/65 transition-colors truncate flex-1">
+                    {c.sub}
+                  </span>
+                  <span className="text-xs font-mono px-1.5 py-0.5 border border-neon-green/25 text-neon-green/50 bg-neon-green/5 shrink-0">
+                    {c.tag}
                   </span>
                 </button>
               ))}

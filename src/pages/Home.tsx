@@ -4,8 +4,17 @@ import { ProtocolCard } from "@/components/ProtocolCard";
 import { ProtocolSection } from "@/components/ProtocolSection";
 import { PROTOCOLS } from "@/data/protocols";
 import { motion } from "framer-motion";
+import { useEffect } from "react";
 
 export default function Home() {
+  useEffect(() => {
+    const target = sessionStorage.getItem("scrollTarget");
+    if (target) {
+      sessionStorage.removeItem("scrollTarget");
+      setTimeout(() => document.getElementById(target)?.scrollIntoView({ behavior: "smooth" }), 300);
+    }
+  }, []);
+
   return (
     <div className="min-h-screen relative">
       <Navbar />
