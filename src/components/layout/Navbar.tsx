@@ -1,4 +1,5 @@
 import { PROTOCOLS } from "@/data/protocols";
+import { ROBOTS } from "@/data/robots";
 import { navigate } from "@/router";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, Cpu } from "lucide-react";
@@ -13,18 +14,18 @@ const PROTOCOL_COLORS: Record<string, string> = {
   red: "#ff1744",
 };
 
-const SEMICONDUCTORS = [
-  { id: "stm32", name: "STM32", sub: "ARM Cortex-M · ST Microelectronics", tag: "32-bit" },
-  { id: "esp32", name: "ESP32", sub: "Xtensa LX6 · Espressif Systems", tag: "WiFi / BT" },
-  { id: "atmega", name: "ATmega", sub: "AVR 8-bit · Microchip / Arduino", tag: "8-bit" },
-  { id: "nrf52", name: "nRF52", sub: "Cortex-M4 · Nordic Semiconductor", tag: "BLE" },
-  { id: "rp2040", name: "RP2040", sub: "Dual Cortex-M0+ · Raspberry Pi", tag: "PIO" },
-  { id: "imxrt", name: "i.MX RT", sub: "Cortex-M7 · NXP Semiconductors", tag: "600 MHz" },
-];
+// const SEMICONDUCTORS = [
+//   { id: "stm32", name: "STM32", sub: "ARM Cortex-M · ST Microelectronics", tag: "32-bit" },
+//   { id: "esp32", name: "ESP32", sub: "Xtensa LX6 · Espressif Systems", tag: "WiFi / BT" },
+//   { id: "atmega", name: "ATmega", sub: "AVR 8-bit · Microchip / Arduino", tag: "8-bit" },
+//   { id: "nrf52", name: "nRF52", sub: "Cortex-M4 · Nordic Semiconductor", tag: "BLE" },
+//   { id: "rp2040", name: "RP2040", sub: "Dual Cortex-M0+ · Raspberry Pi", tag: "PIO" },
+//   { id: "imxrt", name: "i.MX RT", sub: "Cortex-M7 · NXP Semiconductors", tag: "600 MHz" },
+// ];
 
-const COMPONENTS = [
-  { id: "mosfet", name: "IRLZ44N", sub: "N-Channel Power MOSFET · Logic-Level", tag: "Switch", path: "/mosfet" },
-];
+// const COMPONENTS = [
+//   { id: "mosfet", name: "IRLZ44N", sub: "N-Channel Power MOSFET · Logic-Level", tag: "Switch", path: "/mosfet" },
+// ];
 
 function useOutsideClick(ref: RefObject<HTMLElement | null>, cb: () => void) {
   useEffect(() => {
@@ -158,7 +159,7 @@ export function Navbar() {
               </button>
             </DropMenu>
 
-            <DropMenu label="SEMICONDUCTORS" hoverTextClass="hover:text-neon-magenta" align="right">
+            {/* <DropMenu label="SEMICONDUCTORS" hoverTextClass="hover:text-neon-magenta" align="right">
               {SEMICONDUCTORS.map((s) => (
                 <button
                   key={s.id}
@@ -194,6 +195,27 @@ export function Navbar() {
                   </span>
                   <span className="text-xs font-mono px-1.5 py-0.5 border border-neon-green/25 text-neon-green/50 bg-neon-green/5 shrink-0">
                     {c.tag}
+                  </span>
+                </button>
+              ))}
+            </DropMenu> */}
+
+            <DropMenu label="ROBOTS" hoverTextClass="hover:text-neon-purple" align="right">
+              {ROBOTS.map((r) => (
+                <button
+                  key={r.id}
+                  type="button"
+                  onClick={() => navigate(r.path)}
+                  className="w-full flex items-center gap-3 px-4 h-10 border-b border-white/8 last:border-b-0 hover:bg-white/5 transition-colors group text-left"
+                >
+                  <span className="text-sm font-bold font-mono text-neon-purple/80 tracking-tight group-hover:text-neon-purple transition-colors w-20 shrink-0">
+                    {r.name}
+                  </span>
+                  <span className="text-xs font-mono text-foreground/40 group-hover:text-foreground/65 transition-colors truncate flex-1">
+                    {r.sub}
+                  </span>
+                  <span className="text-xs font-mono px-1.5 py-0.5 border border-neon-purple/25 text-neon-purple/50 bg-neon-purple/5 shrink-0">
+                    {r.tag}
                   </span>
                 </button>
               ))}
