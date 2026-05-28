@@ -16,4 +16,11 @@ export const ROBOTS: RobotInfo[] = [
     tag: "5kg / 922mm",
     path: "/robots/era-m5",
   },
+  {
+    id: "fdrobot",
+    name: "FDROBOT",
+    sub: "TUBOT · 6-осевой кобот · TIBot teach pendant",
+    tag: "TCB / 220V",
+    path: "/robots/fdrobot",
+  },
 ];
